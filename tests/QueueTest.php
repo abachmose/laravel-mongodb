@@ -19,7 +19,7 @@ class QueueTest extends TestCase
         // Get and reserve the test job (next available)
         $job = Queue::pop('test');
         $this->assertInstanceOf(Jenssegers\Mongodb\Queue\MongoJob::class, $job);
-        $this->assertEquals(1, $job->isReserved());
+        $this->assertEquals(true, $job->isReserved());
         $this->assertEquals(json_encode([
             'displayName' => 'test',
             'job' => 'test',
@@ -43,7 +43,7 @@ class QueueTest extends TestCase
         Queue::getDatabase()
             ->table(Config::get('queue.connections.database.table'))
             ->where('_id', $id)
-            ->update(['reserved' => 1, 'reserved_at' => $expiry]);
+            ->update('reserved_at' => $expiry]);
 
         // Expect an attempted older job in the queue
         $job = Queue::pop('test');
