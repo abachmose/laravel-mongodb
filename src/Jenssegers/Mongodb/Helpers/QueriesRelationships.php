@@ -105,12 +105,19 @@ trait QueriesRelationships
      */
     protected function getRelatedConstraintKey($relation)
     {
-        if ($relation instanceof HasOneOrMany) {
-					  if(method_exists($relation, 'getQualifiedParentKeyName')){
-                list($table, $column) = explode(".", $relation->getQualifiedParentKeyName());
-                
-                return $column;
+        if(method_exists($relation, 'getQualifiedParentKeyName')){
+            $parts = explode(".", $relation->getQualifiedParentKeyName());
+
+            $table = array_shift($parts);
+
+            if(count($parts) === 0){
+                return $table;
             }
+
+            return join(".", $parts);
+        }
+
+        if ($relation instanceof HasOneOrMany) {
             return $this->model->getKeyName();
         }
 
