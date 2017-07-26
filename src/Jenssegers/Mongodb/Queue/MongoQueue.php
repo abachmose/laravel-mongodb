@@ -74,7 +74,11 @@ class MongoQueue extends DatabaseQueue
             [
                 '$set' => [
                     'reserved_at' => Carbon::now()->getTimestamp(),
+
                 ],
+                '$inc' => [
+                  'attempts' => 1
+                ]
             ],
             [
                 'returnDocument' => FindOneAndUpdate::RETURN_DOCUMENT_AFTER,
