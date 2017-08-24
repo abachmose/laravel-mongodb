@@ -172,6 +172,6 @@ trait QueriesRelationships
         });
 
         // All related ids.
-        return array_keys($relationCount);
+        return array_map('strval', array_keys($relationCount));
     }
 }
