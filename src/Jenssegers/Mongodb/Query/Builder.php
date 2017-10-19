@@ -198,6 +198,11 @@ class Builder extends BaseBuilder
         return $this->where('_id', '=', $this->convertKey($id))->first($columns);
     }
 
+    public function cursor()
+    {
+        return $this->getFresh([], true);
+    }
+
     /**
      * @inheritdoc
      */
@@ -210,9 +215,9 @@ class Builder extends BaseBuilder
      * Execute the query as a fresh "select" statement.
      *
      * @param  array $columns
-     * @return array|static[]|Collection
+     * @return array|static[]|Collection|\MongoCursor
      */
-    public function getFresh($columns = [])
+    public function getFresh($columns = [], $returnCursor = false)
     {
         // If no columns have been specified for the select statement, we will set them
         // here to either the passed columns, or the standard default of retrieving
@@ -387,6 +392,10 @@ class Builder extends BaseBuilder
 
             // Execute query and get MongoCursor
             $cursor = $this->collection->find($wheres, $options);
+
+            if($returnCursor === true){
+                return $cursor;
+            }
 
             // Return results as an array with numeric keys
             $results = iterator_to_array($cursor, false);

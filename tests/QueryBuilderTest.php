@@ -701,4 +701,27 @@ class QueryBuilderTest extends TestCase
             $this->assertEquals(1, count($result['tags']));
         }
     }
+
+    public function testReturnCursor()
+    {
+        DB::collection('items')->insert($inserted = [
+           ['name' => 'foo'],
+           ['name' => 'bar'],
+           ['name' => 'baz']
+        ]);
+
+        $cursor = DB::collection('items')->cursor();
+
+        $this->assertInstanceOf('\MongoDB\Driver\Cursor', $cursor);
+
+        foreach($cursor as $doc){
+            foreach($inserted as $i => $expected){
+                if($expected['name'] === $doc['name']){
+                    unset($inserted[$i]);
+                }
+            }
+        }
+
+        $this->assertCount(0, $inserted);
+    }
 }
