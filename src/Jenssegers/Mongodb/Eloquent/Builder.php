@@ -33,6 +33,7 @@ class Builder extends EloquentBuilder
      */
     public function update(array $values, array $options = [])
     {
+        $this->applyScopes();
         // Intercept operations on embedded models and delegate logic
         // to the parent relation instance.
         if ($relation = $this->model->getParentRelation()) {
