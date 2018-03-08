@@ -134,7 +134,9 @@ abstract class Model extends BaseModel
         }
 
         // This checks for embedded relation support.
-        if (method_exists($this, $key) and ! method_exists(static::class, $key)) {
+        $reflection = new \ReflectionClass($this);
+
+        if ($reflection->hasMethod($key) && !$reflection->getMethod($key)->isStatic()) {
             return $this->getRelationValue($key);
         }
 
