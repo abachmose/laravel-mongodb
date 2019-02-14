@@ -530,4 +530,15 @@ class RelationsTest extends TestCase
         $this->assertEquals([$user->_id], $client->user_ids);
         $this->assertEquals([$client->_id], $user->client_ids);
     }
+
+    public function testSerializeRecursiveQueueableRelationsBug()
+    {
+        $author = User::create(['name' => 'Stephen King']);
+        $book   = $author->books()->create(['title' => 'IT']);
+
+        $author->setRelation('books', $book->newCollection([$book]));
+        $book->setRelation('author', $author);
+
+        $this->assertEquals([ 'author' ], $book->getQueueableRelations());
+    }
 }

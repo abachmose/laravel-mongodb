@@ -441,15 +441,11 @@ abstract class Model extends BaseModel
         foreach ($this->getRelationsWithoutParent() as $key => $relation) {
             if (method_exists($this, $key)) {
                 $relations[] = $key;
-            }
-
-            if ($relation instanceof QueueableCollection) {
+            } elseif ($relation instanceof QueueableCollection) {
                 foreach ($relation->getQueueableRelations() as $collectionValue) {
                     $relations[] = $key.'.'.$collectionValue;
                 }
-            }
-
-            if ($relation instanceof QueueableEntity) {
+            } elseif ($relation instanceof QueueableEntity) {
                 foreach ($relation->getQueueableRelations() as $entityKey => $entityValue) {
                     $relations[] = $key.'.'.$entityValue;
                 }
