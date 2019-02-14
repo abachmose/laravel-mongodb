@@ -20,6 +20,15 @@ class EmbedsOne extends EmbedsOneOrMany
         return $models;
     }
 
+    public function getEager()
+    {
+        if(!$model = $this->getResults()){
+            return $this->toCollection();
+        }
+
+        return $this->toCollection([ $model ]);
+    }
+
     /**
      * @inheritdoc
      */

@@ -2,6 +2,7 @@
 
 class EmbeddedRelationsTest extends TestCase
 {
+    use \Illuminate\Queue\SerializesAndRestoresModelIdentifiers;
     public function tearDown()
     {
         Mockery::close();
@@ -783,5 +784,20 @@ class EmbeddedRelationsTest extends TestCase
 
         $this->assertEquals(['father'], $user->getQueueableRelations());
         $this->assertEquals([], $user->father->getQueueableRelations());
+    }
+
+    public function testSerializable()
+    {
+        $user = User::create(['name' => 'John Doe']);
+        $user->father()->save(new User(['name' => 'Mark Doe']));
+
+        $user = $this->restoreModel(
+            $this->getSerializedPropertyValue($user)
+        );
+
+        $this->assertEquals(
+            'Mark Doe',
+            $user->father->name
+        );
     }
 }
