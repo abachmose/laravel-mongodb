@@ -701,4 +701,13 @@ class QueryBuilderTest extends TestCase
             $this->assertEquals(1, count($result['tags']));
         }
     }
+
+
+    public function testCursor()
+    {
+        $this->assertInstanceOf(
+            \MongoDB\Driver\Cursor::class,
+            DB::collection('users')->cursor()
+        );
+    }
 }

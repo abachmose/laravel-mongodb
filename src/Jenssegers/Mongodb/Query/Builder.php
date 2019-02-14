@@ -211,13 +211,20 @@ class Builder extends BaseBuilder
         return $this->getFresh($columns);
     }
 
+    public function cursor()
+    {
+        return $this->getFresh([], true);
+    }
+
     /**
      * Execute the query as a fresh "select" statement.
      *
      * @param  array $columns
+     * @param bool   $returnCursor
+     *
      * @return array|static[]|Collection
      */
-    public function getFresh($columns = [])
+    public function getFresh($columns = [], bool $returnCursor = false)
     {
         // If no columns have been specified for the select statement, we will set them
         // here to either the passed columns, or the standard default of retrieving
@@ -331,6 +338,10 @@ class Builder extends BaseBuilder
                 $options = array_merge($options, $this->options);
             }
 
+            if($returnCursor === true){
+                return $this->collection->aggregateCursor($pipeline, $options);
+            }
+
             // Execute aggregation
             $results = iterator_to_array($this->collection->aggregate($pipeline, $options));
 
@@ -392,6 +403,10 @@ class Builder extends BaseBuilder
 
             // Execute query and get MongoCursor
             $cursor = $this->collection->find($wheres, $options);
+
+            if($returnCursor === true){
+                return $cursor;
+            }
 
             // Return results as an array with numeric keys
             $results = iterator_to_array($cursor, false);
