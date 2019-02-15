@@ -5,17 +5,13 @@ class HybridRelationsTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        MysqlUser::truncate();
+        MysqlBook::truncate();
+        MysqlRole::truncate();
 
         MysqlUser::executeSchema();
         MysqlBook::executeSchema();
         MysqlRole::executeSchema();
-    }
-
-    public function tearDown()
-    {
-        MysqlUser::truncate();
-        MysqlBook::truncate();
-        MysqlRole::truncate();
     }
 
     public function testMysqlRelations()
@@ -93,8 +89,8 @@ class HybridRelationsTest extends TestCase
         $otherUser->id = 3;
         $otherUser->save();
         // Make sure they are created
-        $this->assertInternalType('int', $user->id);
-        $this->assertInternalType('int', $otherUser->id);
+        $this->assertIsInt($user->id);
+        $this->assertIsInt($otherUser->id);
         // Clear to start
         $user->books()->truncate();
         $otherUser->books()->truncate();
