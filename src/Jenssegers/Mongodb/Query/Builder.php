@@ -341,7 +341,11 @@ class Builder extends BaseBuilder
             }
 
             if($returnCursor === true){
-                return $this->collection->aggregateCursor($pipeline, $options);
+                if(method_exists($this->collection, 'aggregateCursor')){
+                    return $this->collection->aggregateCursor($pipeline, $options);
+                }
+
+                return $this->collection->aggregate($pipeline, $options);
             }
 
             // Execute aggregation
