@@ -94,6 +94,10 @@ trait QueriesRelationships
 
         $relatedIds = $this->getConstrainedRelatedIds($relations, $operator, $count);
 
+        if($relation->getRelated()->getKeyType() !== 'int'){
+            $relatedIds = array_map('strval', $relatedIds);
+        }
+
         return $this->whereIn($this->getRelatedConstraintKey($relation), $relatedIds, $boolean, $not);
     }
 
@@ -106,6 +110,15 @@ trait QueriesRelationships
     protected function getRelatedConstraintKey($relation)
     {
         if ($relation instanceof HasOneOrMany) {
+            if(method_exists($relation, 'getQualifiedParentKeyName')){
+                $parts = explode(".", $relation->getQualifiedParentKeyName());
+                $table = array_shift($parts);
+                if(count($parts) === 0){
+                    return $table;
+                }
+                return join(".", $parts);
+            }
+
             return $this->model->getKeyName();
         }
 
