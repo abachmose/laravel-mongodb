@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Jenssegers\Mongodb\Eloquent\Model;
+use Jenssegers\Mongodb\Relations\QueryableForExistence;
 
 trait QueriesRelationships
 {
@@ -90,7 +91,9 @@ trait QueriesRelationships
             $not = !$not;
         }
 
-        $relations = $hasQuery->pluck($this->getHasCompareKey($relation));
+        $relations = $relation instanceof QueryableForExistence
+            ? $relation->getRelatedKeys($hasQuery)
+            : $hasQuery->pluck($this->getHasCompareKey($relation));
 
         $relatedIds = $this->getConstrainedRelatedIds($relations, $operator, $count);
 
