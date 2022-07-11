@@ -687,7 +687,11 @@ class Builder extends BaseBuilder
         }
 
         $wheres = $this->compileWheres();
-        $result = $this->collection->DeleteMany($wheres);
+        if($this->targetsSingleModel()){
+            $result = $this->collection->DeleteOne($wheres);
+        }else {
+            $result = $this->collection->DeleteMany($wheres);
+        }
         if (1 == (int) $result->isAcknowledged()) {
             return $result->getDeletedCount();
         }
