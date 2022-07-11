@@ -844,12 +844,28 @@ class Builder extends BaseBuilder
         }
 
         $wheres = $this->compileWheres();
-        $result = $this->collection->UpdateMany($wheres, $query, $options);
+
+        if($this->targetsSingleModel()){
+            unset($options['multiple']);
+            $result = $this->collection->UpdateOne($wheres, $query, $options);
+        } else {
+            $result = $this->collection->UpdateMany($wheres, $query, $options);
+        }
+
         if (1 == (int) $result->isAcknowledged()) {
             return $result->getModifiedCount() ? $result->getModifiedCount() : $result->getUpsertedCount();
         }
 
         return 0;
+    }
+
+    protected function targetsSingleModel()
+    {
+        $wheres = $this->wheres ?? [];
+
+        return count($wheres) === 1 && 
+            $wheres[0]['column'] === "_id" && 
+            $wheres[0]['operator'] === "=";
     }
 
     /**

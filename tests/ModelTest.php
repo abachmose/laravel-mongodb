@@ -8,7 +8,7 @@ use MongoDB\BSON\UTCDateTime;
 
 class ModelTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         User::truncate();
         Soft::truncate();
@@ -548,4 +548,54 @@ class ModelTest extends TestCase
 
         $this->assertEquals(3, $count);
     }
+
+    public function testUpdateSingleRecord()
+    {
+        $queries = [];
+
+        \DB::enableQueryLog();
+        \DB::listen(function($e) use (&$queries){
+            list($q,) = explode("(", $e->sql);
+            $q = strtolower($q);
+            $queries[$q] = $queries[$q] ?? 0;
+            $queries[$q]++;
+        });
+
+        $john = User::create([ 'tags' => ['male'] ]);
+        $john->name = "John Doe";
+        $john->save();
+
+        $jane = User::create([ 'tags' => ['female'] ]);
+        $jane->name = "Jane Doe";
+        $jane->save();
+
+        $this->assertEquals( $queries['users.insertone'] ?? 0, 2 );
+        $this->assertEquals( $queries['users.updateone'] ?? 0, 2 );
+        $this->assertEquals( $queries['users.updatemany'] ?? 0, 0 );
+
+        User::query()->update(['age' => 42]);
+
+        $this->assertEquals( $queries['users.updateone'] ?? 0, 2 );
+        $this->assertEquals( $queries['users.updatemany'] ?? 0, 1 );
+
+        User::query()->whereAge(42)->update(['tags' => ['has-the-answer-to-life']]);
+
+        $this->assertEquals( $queries['users.updateone'] ?? 0, 2 );
+        $this->assertEquals( $queries['users.updatemany'] ?? 0, 2 );
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Jane Doe',
+            'tags' => ['has-the-answer-to-life'],
+            'age' => 42
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'John Doe',
+            'tags' => ['has-the-answer-to-life'],
+            'age' => 42
+        ]);
+
+        \DB::disableQueryLog();
+    }
+
 }
