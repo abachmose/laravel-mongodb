@@ -866,7 +866,9 @@ class Builder extends BaseBuilder
     protected function targetsSingleModel()
     {
         foreach($this->wheres ?? [] as $where){
-            if ($where['column'] === "_id" && $where['operator'] === "="){
+            if (($where['type']??null) === "Basic" &&
+              ($where['column']??null) === "_id" && 
+            ($where['operator']??null) === "="){
                 return true;
             }
         }
