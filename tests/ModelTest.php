@@ -595,6 +595,24 @@ class ModelTest extends TestCase
             'age' => 42
         ]);
 
+        User::query()->where("_id", $jane->getKey())
+                    ->orWhere("_id", $john->getKey())
+                    ->update(['age' => 45]);
+        
+        $this->assertEquals( $queries['users.updatemany'] ?? 0, 3 );
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Jane Doe',
+            'tags' => ['has-the-answer-to-life'],
+            'age' => 45
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'John Doe',
+            'tags' => ['has-the-answer-to-life'],
+            'age' => 45
+        ]);
+
         \DB::disableQueryLog();
     }
 
