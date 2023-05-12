@@ -2,16 +2,20 @@
 
 class HybridRelationsTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        MysqlUser::truncate();
-        MysqlBook::truncate();
-        MysqlRole::truncate();
 
         MysqlUser::executeSchema();
         MysqlBook::executeSchema();
         MysqlRole::executeSchema();
+    }
+
+    public function tearDown(): void
+    {
+        MysqlUser::truncate();
+        MysqlBook::truncate();
+        MysqlRole::truncate();
     }
 
     public function testMysqlRelations()

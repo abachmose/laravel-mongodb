@@ -43,6 +43,8 @@ composer require jenssegers/mongodb
  5.4.x    | 3.2.x
  5.5.x    | 3.3.x
  5.6.x    | 3.4.x
+ 5.7.x    | 3.4.x
+ 5.8.x    | 3.5.x
 
 And add the service provider in `config/app.php`:
 
@@ -63,8 +65,10 @@ The service provider will register a mongodb database extension with the origina
 For usage outside Laravel, check out the [Capsule manager](https://github.com/illuminate/database/blob/master/README.md) and add:
 
 ```php
-$capsule->getDatabaseManager()->extend('mongodb', function($config)
+$capsule->getDatabaseManager()->extend('mongodb', function($config, $name)
 {
+    $config['name'] = $name;
+
     return new Jenssegers\Mongodb\Connection($config);
 });
 ```
@@ -480,7 +484,7 @@ User::where('name', 'Jaques')->decrement('weight', 50);
 The number of updated objects is returned:
 
 ```php
-$count = User->increment('age');
+$count = User::increment('age');
 ```
 
 You may also specify additional columns to update:

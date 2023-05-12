@@ -262,7 +262,6 @@ class ModelTest extends TestCase
         $user->save();
 
         $old = $user->updated_at;
-
         sleep(1);
         $user->touch();
         $check = User::find($user->_id);

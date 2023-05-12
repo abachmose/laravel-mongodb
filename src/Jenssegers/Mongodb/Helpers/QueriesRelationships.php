@@ -126,7 +126,7 @@ trait QueriesRelationships
         }
 
         if ($relation instanceof BelongsTo) {
-            return $relation->getForeignKey();
+            return $relation->getForeignKeyName();
         }
 
         if ($relation instanceof BelongsToMany && ! $this->isAcrossConnections($relation)) {
@@ -146,7 +146,7 @@ trait QueriesRelationships
             return $relation->getHasCompareKey();
         }
 
-        return $relation instanceof HasOneOrMany ? $relation->getForeignKeyName() : $relation->getOwnerKey();
+        return $relation instanceof HasOneOrMany ? $relation->getForeignKeyName() : $relation->getOwnerKeyName();
     }
 
     /**
