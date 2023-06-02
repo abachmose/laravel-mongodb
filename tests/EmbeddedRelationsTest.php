@@ -3,7 +3,7 @@
 class EmbeddedRelationsTest extends TestCase
 {
     use \Illuminate\Queue\SerializesAndRestoresModelIdentifiers;
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
 
